@@ -9,18 +9,40 @@ class WhatsAppEmulator
   end
 
   def authenticate_roots
-    puts 'Scan QR Code on admin device'.blue
-    ok_button = nil
-    while ok_button.nil?
-      sleep(0.1)
-      begin
-        ok_button = @driver.find_element(:css => Constants::Css::BUTTON_AUTHENTICATION)
-      rescue Selenium::WebDriver::Error::NoSuchElementError => no_element_error
-        puts 'Still loading...'.blue
-      end
-    end
-    ok_button.click
+  	handle_qr_code
+  	handle_privacy_policy_popup
     puts 'Authentication SUCCESS'.green
+  end
+
+  def handle_qr_code
+    qr_code_element = @driver.find_element(:css => Constants::Css::QR_CODE) rescue nil
+    while true
+      if qr_code_element
+        begin
+          while @driver.find_element(:css => Constants::Css::QR_CODE)
+            puts 'Scan QR Code on admin device'.red
+            sleep(5)
+          end
+        rescue Selenium::WebDriver::Error::NoSuchElementError 
+          break
+        end
+      end
+	    qr_code_element = @driver.find_element(:css => Constants::Css::QR_CODE) rescue nil
+    end
+    puts 'Successfully authenticated qr code'.green
+  end
+
+  def handle_privacy_policy_popup
+  	sleep 5
+    chats = @driver.find_element(:css => Constants::Css::USER_INFO_CONTAINER) rescue nil
+    if chats.nil?
+      ok_button = nil
+      while ok_button.nil?
+        sleep 5
+        ok_button = @driver.find_element(:css => Constants::Css::BUTTON_AUTHENTICATION) rescue nil
+      end
+      ok_button.click
+    end
   end
 
   def inject_script
@@ -148,7 +170,106 @@ class WhatsAppEmulator
     search_label.send_key(:down)
   end
 
+  def get_all_users_messages
+  	sleep 5
+  	users = []
+    users_info_containers = @driver.find_elements(:css => Constants::Css::USER_INFO_CONTAINER)
+    for user_info_container in users_info_containers
+    		begin
+	    		user = get_user_info user_info_container
+	    		puts user
+    		rescue Exception => e
+					debugger    			
+    		end
+	    	users[user["name"]] = user rescue nil
+    end
+    debugger
+  end
 
+  def get_user_info user_info_container
+  		puts "getting user info ".yellow
+    	user = {}
+    	click_element user_info_container
+    	user_info_header = @driver.find_elements(:css => Constants::Css::USER_CHAT_HEADER)[1]
 
+    	user["name"] = Nokogiri::HTML(user_info_container.attribute("innerHTML")).at_css(Constants::Css::TEXT_USER_NAME).text
+    	user["image_url"] = Nokogiri::HTML(user_info_container.attribute("innerHTML")).at_css(Constants::Css::AVATAR_IMAGE).attr("src") rescue nil
 
+    	click_element user_info_header
+
+    	user["phone_number"] = @driver.find_elements(:css => Constants::Css::USER_PHONE_NUMBER)[0].text.split("\n")[1]
+
+  		puts "Getting messages for #{user["name"]}".yellow
+    	user["messages"] = get_messages
+    	user
+  end
+
+  def get_messages
+		puts "getting user messages ".yellow
+  	messages = []
+  	group_messages_elements = @driver.find_elements(:css => Constants::Css::GROUP_MESSAGE)
+  	if group_messages_elements.length > 0
+  		messages = get_group_messages
+  	else 
+  		messages = get_user_to_user_messages
+  	end
+  	messages
+  end
+
+  def get_group_messages
+  	group_messages_elements = @driver.find_elements(:css => Constants::Css::OUTER_MESSAGE)
+  	puts "getting group messages".yellow
+  	[]
+  end
+
+  def get_user_to_user_messages 
+  	puts "getting user to user messages".yellow
+  	messages = []
+  	messages_elements = @driver.find_elements(:css => Constants::Css::OUTER_MESSAGE)
+		for message_element in messages_elements
+  		message = {}
+  		
+  		message_html = Nokogiri::HTML(message_element.attribute("innerHTML"))
+  		message["type"] = get_message_type message_html
+  		message["direction"] = get_message_direction message_html
+  		if message["type"] == Constants::Css::MESSAGE_TYPE_CHAT 
+    		message["text"] = message_html.at_css(Constants::Css::MESSAGE_TEXT).text rescue ""
+    		message["time"] = message_html.at_css(Constants::Css::MESSAGE_TIME).text rescue ""
+    	end
+    	messages.append(message)
+		end
+		messages
+  end
+
+  def get_message_type message_html
+  	messages_elements_classes = message_html.at_css(Constants::Css::INNER_MESSAGE)["class"] 
+  	if messages_elements_classes.include? Constants::Css::MESSAGE_TYPE_CHAT
+  		message_type = Constants::Css::MESSAGE_TYPE_CHAT
+  	elsif messages_elements_classes.include? Constants::Css::MESSAGE_TYPE_IMAGE
+  		message_type = Constants::Css::MESSAGE_TYPE_IMAGE
+  	else
+  		message_type = "audio/video"
+  	end
+  	message_type
+  end
+
+  def get_message_direction message_html
+  	messages_elements_classes = message_html.at_css(Constants::Css::INNER_MESSAGE)["class"] 
+  	if messages_elements_classes.include? Constants::Css::MESSAGE_DIRECTION_OUT
+  		message_direction = Constants::Css::MESSAGE_DIRECTION_OUT
+  	elsif messages_elements_classes.include? Constants::Css::MESSAGE_DIRECTION_IN
+  		message_direction = Constants::Css::MESSAGE_DIRECTION_IN
+  	else
+  		message_direction = "system"
+  	end
+  	message_direction
+  end
+
+  def click_element element
+		sleep 3
+  	while not element.click == Constants::Css::SUCCESSFULL_CLICK_MESSAGE
+  		sleep 3
+  	end
+  	sleep 2
+  end
 end

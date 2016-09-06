@@ -10,6 +10,23 @@ module Constants
     TEXT_CHAT_TITLE = 'h2.chat-title'
     ITEM_LABEL_SEARCH = 'label.cont-input-search'
     ITEM_SEARCH_CONTAINER = 'div.search-container'
+    USER_INFO_CONTAINER = "div.chat"
+    USER_IMAGE = "img.avatar-image"
+    QR_CODE = "div.qrcode"
+    USER_CHAT_HEADER = ".pane-header"
+    # USER_PHONE_NUMBER = "textfield-static"
+    AVATAR_IMAGE= ".avatar-image"
+    USER_PHONE_NUMBER = ".animate-enter2"
+    SUCCESSFULL_CLICK_MESSAGE = "ok"
+    OUTER_MESSAGE = ".msg"
+    INNER_MESSAGE = ".message"
+    MESSAGE_TYPE_CHAT = "message-chat"
+    MESSAGE_TYPE_IMAGE = "message-image"
+    MESSAGE_DIRECTION_OUT = "message-out"
+    MESSAGE_DIRECTION_IN = "message-in"
+    MESSAGE_TEXT = ".selectable-text"
+    MESSAGE_TIME = ".message-datetime"
+    GROUP_MESSAGE = ".msg-group"
   end
 
   module ID
