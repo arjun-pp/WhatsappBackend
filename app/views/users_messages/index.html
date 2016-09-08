@@ -1,4 +1,5 @@
 <div layout="row" ng-controller="MessageController as mctrl">
+	{{mctrl.users_messages}}
   <div ng-repeat="(name, info) in mctrl.users_messages" flex="25">
 	  <span ng-click ="set_current_user(user)">
 	  	<md-card>
