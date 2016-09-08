@@ -1,0 +1,15 @@
+{
+  "name": "WhatsappBackend",
+  "homepage": "https://github.com/bhuwan-arora/WhatsappBackend",
+  "description": "Whatsapp chatbot integration",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

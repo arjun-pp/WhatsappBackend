@@ -53,9 +53,12 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  match 'index' => 'users_messages#index', :via => [:get]
+  match 'get_users_messages' => 'users_messages#get', :via => [:get]
+  
   namespace :api do
     namespace :v0 do
-      match 'message_notification' => 'notification_api#message_received', :via => [:post]
+      match 'message_notification' => 'notifications#message_received', :via => [:post]
     end
   end
 end

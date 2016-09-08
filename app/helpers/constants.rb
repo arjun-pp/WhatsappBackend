@@ -33,6 +33,10 @@ module Constants
     ITEM_SCROLL = 'pane-side'
   end
 
+  module DATA
+    USERS_MESSAGES = [{"name"=>"Yash", "image_url"=>"https://dyn.web.whatsapp.com/pp?t=s&u=14804343147%40c.us&i=1442567214&ref=0%40saUpL6EFvwWxDQxKDQrOjinQxZGXAYybqiAiWfOWfPQlZL05AMna2lLS&tok=0%405wyPTvJYJ4PqdrAOTAFYopL%2BHefBgOTeJZ03%2FxzROvFE9YHF72GRiUiqV%2B7w%2BEy5V0wqAjiAh%2Bf8ng%3D%3D", "phone_number"=>"+1 (480) 434-3147", "messages"=>[{"type"=>"audio/video", "direction"=>"system"}, {"type"=>"message-chat", "direction"=>"message-out", "text"=>"Aur kutiya", "time"=>"11:47"}]}]
+  end
+
   INJECT_SCRIPT = "var observeDOM = (function(){
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver,
         eventListenerSupported = window.addEventListener;

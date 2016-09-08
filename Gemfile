@@ -35,9 +35,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'selenium'
 gem 'selenium-webdriver'
 gem 'colorize'
-gem 'wisper'
 gem 'thin'
-
+gem 'nokogiri'
+gem 'bower-rails'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

@@ -172,18 +172,16 @@ class WhatsAppEmulator
 
   def get_all_users_messages
   	sleep 5
-  	users = []
+  	users = {}
     users_info_containers = @driver.find_elements(:css => Constants::Css::USER_INFO_CONTAINER)
     for user_info_container in users_info_containers
     		begin
 	    		user = get_user_info user_info_container
 	    		puts user
     		rescue Exception => e
-					debugger    			
     		end
 	    	users[user["name"]] = user rescue nil
     end
-    debugger
   end
 
   def get_user_info user_info_container
