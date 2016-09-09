@@ -2,6 +2,10 @@
 	function(){
 	'use strict';
 	angular
-		.module('message',[]);
+		.module('message',[
+			'ngMaterial',
+			'ngAnimate'
+			]
+		);
 	}
 )();

@@ -1,62 +1,33 @@
 <div layout="row" ng-controller="MessageController as mctrl">
-  <div ng-repeat="(name, info) in mctrl.users_messages" flex="25">
-	  <span ng-click ="set_current_user(user)">
-	  	<md-card>
-		  <md-card-title>
-		    <md-card-title-text>
-		      <span class="md-headline" ng-model="user">{{info.name}}</span>
-	    	</md-card-title-text>
-		    <md-card-title-media>
-		      <div class="md-media-sm card-media">
-		        <img ng-src={{info.image_url}}>
-		      </div>
-		    </md-card-title-media>
-		  </md-card-title>
-		</md-card>
-	  </span> 
-  </div>
-<!--   <div flex="50" ng-repeat="message_info in mctrl.users_messages.current_user.info.messages" ng-switch="message.direction" >
-	 	<div ng-switch-when="message-in">
-			<md-card md-theme="{{'dark-purple'}}">
-		  <md-card-title>
-		    <md-card-title-text>
-		      <span class="md-headline">{{message_info.text}}</span>
-		    </md-card-title-text>
-		  </md-card-title>
-		</md-card>
-  	</div>
-	 	<div ng-switch-when="message-out">
-			<md-card md-theme="{{'red'}}">
-		  <md-card-title>
-		    <md-card-title-text>
-		      <span class="md-headline">{{message_info.text}}</span>
-		    </md-card-title-text>
-		  </md-card-title>
-		</md-card>
-  	</div>
-	 	<div ng-switch-when="system">
-			<md-card md-theme="{{'blue'}}">
-		  <md-card-title>
-		    <md-card-title-text>
-		      <span class="md-headline">{{message_info.text}}</span>
-		    </md-card-title-text>
-		  </md-card-title>
-		</md-card>
-  	</div>
-  </div>
-  <div flex="25" layout="column">
-  	<div ng-repeat="message in mctrl.generic_messages" flex="80">
-			<md-card md-theme="{{'white'}}" ng-click="generic_message_selected($index)">
-		  <md-card-title>
-		    <md-card-title-text>
-		      <span class="md-headline">{{message}}</span>
-		    </md-card-title-text>
-		  </md-card-title>
-		</md-card>
-  	</div>
-  	<div layout="row" ng-show="mctrl.is_generic_message_selected">
-  		<md-button class="md-raised" flex>Send</md-button >
-  		<md-button class="md-raised" flex>Send To All</md-button >
-  	</div>
-  </div> -->
+	<div flex="25">
+		<md-list >
+		  	<md-list-item ng-repeat="(name, info) in mctrl.users_info" ng-click="mctrl.setCurrentUser(name)">
+		  		{{name}}
+			</md-list-item>
+		</md-list>
+	</div>
+	<div flex="50">
+		<div ng-repeat="message in mctrl.current_user_messages">
+			{{message.text}}
+		</div>
+	</div>
+	<div flex="25" layout="column">
+		<div flex>
+			<md-list >
+			  	<md-list-item ng-repeat="message in mctrl.generic_messages">
+					{{message}}
+				<md-checkbox class="md-secondary" ng-click="wctrl.addGenericMessage(message)">
+				</md-checkbox>
+				</md-list-item>
+			</md-list>
+		</div>
+		<div flex ng-if="wctrl.existsSelectedGenericMessage()" layout="row">
+			<md-button md-no-ink class="md-primary" flex="50" ng-click="mctrl.send()">
+				Send
+			</md-button>
+			<md-button md-no-ink class="md-primary" flex="50" ng-click="mctrl.sendToAll()">
+				Send to all
+			</md-button>
+		</div>
+	</div>
 </div>
