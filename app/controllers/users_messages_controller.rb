@@ -17,15 +17,21 @@ class UsersMessagesController < ApplicationController
     render :json => response
   end
 
-  def send
-    users = params["users"]
-    messages = params["messages"]
-    Api::V0::UsersMessages.instance.send_messages_to_users users, messages
-  end
+  # def send
+  #   response = {}
+  #   users = params["users"]
+  #   messages = params["messages"]
+  #   users_messages_instance = Api::V0::UsersMessages.instance
+  #   users_messages_instance.send users, messages
+  #   response["status"] = 200
+  #   response["status"] = "success"
+  #   render :json => response
+  # end
 
   def get_new_messages
     response = {}
     response["status"] = 200
     response["info"] = Api::V0::UsersMessages.instance.get_new_messages 
+    render :json => response
   end
 end

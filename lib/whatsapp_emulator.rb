@@ -101,6 +101,7 @@ class WhatsAppEmulator
         type_message message
         click_send
         sleep 1
+      end
     end
     is_user_existing
   end
@@ -113,6 +114,7 @@ class WhatsAppEmulator
       if message["time"] == last_read_message_time
         new_messages = messages[index + 1..-1]
         break
+      end
     end
     new_messages
   end
@@ -278,10 +280,9 @@ class WhatsAppEmulator
   end
 
   def click_element element
-		sleep 1
   	while not element.click == Constants::Css::SUCCESSFULL_CLICK_MESSAGE
   		sleep 1
   	end
-  	sleep 1
+  	sleep 2
   end
 end

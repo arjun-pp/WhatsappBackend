@@ -17,7 +17,6 @@
             promise.then(
                 function(response){
                     vm.users_info = response.data.info;
-                    vm.current_user_messages = vm.users_info[2].messages;
                 },
                 function(error){
                     console.log("Error in fetching user messages");
@@ -25,8 +24,8 @@
             )
         }
 
-        function setCurrentUser(current_user_index){
-            vm.current_user = vm.users_info[current_user_index];
+        function setCurrentUser(name){
+            vm.current_user = vm.users_info.name;
             vm.current_user_messages = vm.current_user.messages; 
             console.log("CurrentUser Selected");
         }
@@ -86,8 +85,8 @@
         }
 
         function setReceivedUserInfo(users_info){
-            for (name, messages) in users_messages.received_messages{
-                vm.users_info.name.messages.concat(messages);
+            for (name in users_info.received_messages){
+                vm.users_info.name.messages.concat(users_info.name);
                 vm.users_info.name.unread_message = true; 
             }
             Object.assign(vm.users_info, users_info.new_users);
