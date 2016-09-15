@@ -7,7 +7,7 @@ module Api
         # arr = ["So What's up"]
         # arr = ["So What's up", "Welcome to roots.", "How may I help you"]
 
-        Api::V0::UsersMessages.instance.handle_received_message params['user']
+        Api::V0::UsersMessages.instance.handle_new_messages params['user']
         
       end
     end

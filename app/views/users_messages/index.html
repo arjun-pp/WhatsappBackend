@@ -1,31 +1,60 @@
-<div layout="row" ng-controller="MessageController as mctrl">
-	<div flex="25">
-		<md-list >
-		  	<md-list-item ng-repeat="(name, info) in mctrl.users_info" ng-click="mctrl.setCurrentUser(name)">
+<style type="text/css">
+	.box-button {height: 12px;}
+	.button-holder{
+		position: absolute;
+	    bottom: 0;
+	    right: 0;
+	}
+	.vertical-scroll{
+		overflow: auto;
+	}
+	
+	h1 {
+		text-align: center;
+	}
+</style>
+<div layout="row" ng-controller="MessageController as mctrl" style="height: 100%;">
+	<div flex="25" class="vertical-scroll">
+		<h1>Users</h1>
+		<md-list  layout-align="start center" >
+		  	<md-list-item ng-repeat="(name, info) in mctrl.users_info" ng-click="setCurrentUser(name);">
 		  		{{name}}
+		  		<md-divider></md-divider>
 			</md-list-item>
 		</md-list>
 	</div>
-	<div flex="50">
-		<div ng-repeat="message in mctrl.current_user_messages">
-			{{message.text}}
-		</div>
+	<md-divider></md-divider>
+	<div flex="50" class="vertical-scroll">
+		<h1 ng-if="existsCurrentUser()">Messages</h1>
+		<md-list>
+			<md-list-item ng-repeat="message in mctrl.current_user_messages">
+				<md-list-item ng-switch on="message.direction">
+					<md-list-item ng-switch-when="message-in"  layout-align="start center">{{message.text}}</md-list-item>
+					<md-list-item ng-switch-when="message-out" layout-align="end center">{{message.text}}</md-list-item>
+					<md-list-item ng-switch-default layout-align="center center">{{message.text}}</md-list-item>
+					<br>
+				</md-list-item>
+				<md-divider></md-divider>
+			</md-list-item>
+		</md-list>
 	</div>
-	<div flex="25" layout="column">
+	<md-divider></md-divider>
+	<div flex="25" layout="column" class="vertical-scroll">
+		<h1>Choose message</h1>
 		<div flex>
 			<md-list >
 			  	<md-list-item ng-repeat="message in mctrl.generic_messages">
-					{{message}}
-				<md-checkbox class="md-secondary" ng-click="wctrl.addGenericMessage(message)">
-				</md-checkbox>
+					<p> {{ message }} </p>
+				    <md-checkbox class="md-secondary" ng-click="addGenericMessage(message)" ng-model="message.send">
+				    </md-checkbox>
 				</md-list-item>
 			</md-list>
 		</div>
-		<div flex ng-if="wctrl.existsSelectedGenericMessage()" layout="row">
-			<md-button md-no-ink class="md-primary" flex="50" ng-click="mctrl.send()">
+		<div flex ng-if="existsSelectedGenericMessage()" layout="row" layout-align="center end" >
+			<md-button md-no-ink class="md-primary box-button" flex ng-if="existsCurrentUser()" ng-click="send()" ng-disabled="vm.sending_messages" >
 				Send
 			</md-button>
-			<md-button md-no-ink class="md-primary" flex="50" ng-click="mctrl.sendToAll()">
+			<md-button md-no-ink class="md-primary box-button" flex ng-click="sendToAll()" >
 				Send to all
 			</md-button>
 		</div>

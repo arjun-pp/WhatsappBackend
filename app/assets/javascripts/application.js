@@ -11,5 +11,3 @@
 // about supported directives.
 //
 
-//= require angular/angular
-//= require angular-material

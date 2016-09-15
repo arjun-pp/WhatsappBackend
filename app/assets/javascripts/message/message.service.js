@@ -31,7 +31,7 @@
             return $http({
               method: 'POST',
               url: '/send',
-              params: users_messages
+              data: users_messages
             });
         }        
 

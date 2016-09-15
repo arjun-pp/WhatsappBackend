@@ -56,12 +56,7 @@ Rails.application.routes.draw do
   match 'index' => 'users_messages#index', :via => [:get]
   match 'get_users_info' => 'users_messages#get', :via => [:get]
   match 'get_generic_messages' => 'users_messages#get_generic', :via => [:get]
-  match 'send' => 'users_messages#send', :via => [:get]
+  match 'send' => 'users_messages#send_message', :via => [:post]
   match 'get_new_messages' => 'users_messages#get_new_messages', :via => [:get]
-  
-  namespace :api do
-    namespace :v0 do
-      match 'message_notification' => 'notifications#message_received', :via => [:post]
-    end
-  end
+  match 'message_notification' => 'users_messages#handle_received', :via => [:post]
 end

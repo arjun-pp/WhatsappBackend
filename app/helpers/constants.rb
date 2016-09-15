@@ -24,11 +24,12 @@ module Constants
     MESSAGE_TYPE_IMAGE = "message-image"
     MESSAGE_DIRECTION_OUT = "message-out"
     MESSAGE_DIRECTION_IN = "message-in"
+    MESSAGE_SYSTEM = "system"
     MESSAGE_TEXT = ".selectable-text"
     MESSAGE_TIME = ".message-pre-text"
     GROUP_MESSAGE = ".msg-group"
     UNREAD_COUNT = ".unread_count"
-    MESSAGE_ID = "message-text"
+    MESSAGE_ID = ".message-text"
   end
 
   module ID
@@ -36,7 +37,7 @@ module Constants
   end
 
   module DATA
-    USERS_MESSAGES = [{"name"=>"Yash", "image_url"=>"https://dyn.web.whatsapp.com/pp?t=s&u=14804343147%40c.us&i=1442567214&ref=0%40saUpL6EFvwWxDQxKDQrOjinQxZGXAYybqiAiWfOWfPQlZL05AMna2lLS&tok=0%405wyPTvJYJ4PqdrAOTAFYopL%2BHefBgOTeJZ03%2FxzROvFE9YHF72GRiUiqV%2B7w%2BEy5V0wqAjiAh%2Bf8ng%3D%3D", "phone_number"=>"+1 (480) 434-3147", "messages"=>[{"type"=>"audio/video", "direction"=>"system"}, {"type"=>"message-chat", "direction"=>"message-out", "text"=>"Aur kutiya", "time"=>"11:47"}]}]
+    USERS_MESSAGES = {"bhawna" => {"name"=>"bhawna", "image_url"=>"https://dyn.web.whatsapp.com/pp?t=s&u=918376926400%40c.us&i=1473249302&ref=0%40KpEe%2FaLDzmZWYV92aobqsIEbQ2onOY2Qp1vbFq3UfM1gRdQITc9tblrs&tok=0%407apJS2HFipbiaKKYVY06Dwn6tdyNr5enkmwN%2Bb51OdEWN1LgkPhpfMHQ4PjWwYdn2FDnWZl57WxCgQ%3D%3D", "unread_count"=>0, "phone_number"=>"+91 83769 26400", "messages"=>[{"type"=>"message-chat", "direction"=>"message-in", "text"=>"", "time"=>"[08:16, 9/10/2016] bhawna: "}, {"type"=>"message-chat", "direction"=>"message-out", "text"=>"वट थे फ़क दीद आए रीड", "time"=>"[08:17, 9/10/2016] +91 95604 88236: "}, {"type"=>"message-chat", "direction"=>"message-in", "text"=>"", "time"=>"[08:17, 9/10/2016] bhawna: ", "id"=> "true_918376926400@c.us_3EB0D90379F441E71CE1"}]}}
     GENERIC_USERS_MESSAGES = ["Hi", "How are you"]
   end
 
@@ -79,7 +80,7 @@ Array.from(chats).forEach( function(chat_body, i) {
 	    	//Name of Sender
 	    	//console.log(chat_body.parentElement.children[0].children[0].textContent);
 	    	var xhttp = new XMLHttpRequest();
-	    	xhttp.open('POST', 'https://localhost:3000/api/v0/message_notification', true);
+	    	xhttp.open('POST', 'https://localhost:3000/message_notification', true);
 			  xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			  xhttp.send('user=' + chat_body.parentElement.children[0].children[0].textContent);
 	    }

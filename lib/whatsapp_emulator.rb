@@ -50,12 +50,15 @@ class WhatsAppEmulator
   end
 
   def find_chat name
-    search_user name
-    users = @driver.find_elements(:css => Constants::Css::ITEM_USER)
+    users = @driver.find_elements(:css => Constants::Css::USER_INFO_CONTAINER)
+    puts "no.of named users #{users.length}".yellow
     target_user = nil
     users.each do |user|
-      if user.text == name
+        puts "#{Nokogiri::HTML(user.attribute("innerHTML")).at_css(Constants::Css::TEXT_USER_NAME).text} -- #{name}".yellow
+      if Nokogiri::HTML(user.attribute("innerHTML")).at_css(Constants::Css::TEXT_USER_NAME).text == name
+        puts "#{Nokogiri::HTML(user.attribute("innerHTML")).at_css(Constants::Css::TEXT_USER_NAME).text} -- #{name}".yellow
         target_user = user
+        break
       end
     end
     target_user
@@ -67,9 +70,11 @@ class WhatsAppEmulator
   end
 
 
-  def search_user(name)
-    @driver.find_element(:css => Constants::Css::ITEM_SEARCH).send_keys(name)
-  end
+  # def search_user(name)
+  #   mouse_click_search
+  #   debugger
+  #   @driver.find_element(:css => Constants::Css::ITEM_SEARCH).send_keys(name)
+  # end
 
   def type_message(message)
     @driver.find_element(:css => Constants::Css::ITEM_INPUT).click
@@ -82,7 +87,8 @@ class WhatsAppEmulator
 
   def send_messages_to_users users, messages
     for user in users
-      message_sent = send_messages_to_user user, messages
+      puts "sending messages to user".yellow
+      message_sent = send_messages_to_user user, messages rescue nil
       if message_sent
         puts "#'{messages}' sent to #{user}".green
       else
@@ -91,10 +97,9 @@ class WhatsAppEmulator
     end
   end
 
-  def send_messages_to_user(user, messages)
-    name = user["name"]
+  def send_messages_to_user user, messages
     is_user_existing = false
-    selected = select_user name
+    selected = select_user user
     if selected
       is_user_existing = true
       for message in messages
@@ -106,12 +111,13 @@ class WhatsAppEmulator
     is_user_existing
   end
 
-  def get_unread_messages name, last_read_message_time
+  def get_unread_messages name, last_read_message_id
     user = select_user name 
     messages = get_selected_user_messages
     new_messages = messages
-    messages.each_with_index do |index, message|
-      if message["time"] == last_read_message_time
+    messages.each_with_index do |message, index|
+      if message["id"] == last_read_message_id
+        puts "found old message at index #{index}"
         new_messages = messages[index + 1..-1]
         break
       end
@@ -121,22 +127,6 @@ class WhatsAppEmulator
 
   def broadcast_message(message, list_name)
     send_message_to_user(message, list_name)
-  end
-
-  def get_unread_response
-
-  end
-
-  def get_user_chat_history(name)
-
-  end
-
-  def start_conversation_with_user(name)
-
-  end
-
-  def get_user_responses
-
   end
 
   def navigate_chats
@@ -166,14 +156,9 @@ class WhatsAppEmulator
     end
   end
 
-  def confirm_selected_user(name)
-    name == @driver.find_element(:css => Constants::Css::TEXT_CHAT_TITLE).text
-  end
-
   def mouse_click_search
     search_label = @driver.find_element(:css => Constants::Css::ITEM_LABEL_SEARCH)
-    byebug
-    @driver.action.move_to(search_label).click(search_label).perform
+    @driver.action.move_to(search_label).perform
     search_label.send_key(:down)
     search_label.send_key(:down)
   end
@@ -194,9 +179,12 @@ class WhatsAppEmulator
   end
 
   def get_user_info name
-      search_user name
-      users_info_container = @driver.find_elements(:css => Constants::Css::USER_INFO_CONTAINER).first
-      get_selected_user_info_messages user_info_container
+      users_info_container = find_chat name
+      user_info = {}
+      if users_info_container
+        user_info = get_selected_user_info_messages users_info_container
+      end
+      user_info
   end
 
   def get_selected_user_info_messages user_info_container
@@ -240,19 +228,27 @@ class WhatsAppEmulator
   	messages = []
   	messages_elements = @driver.find_elements(:css => Constants::Css::OUTER_MESSAGE)
 		for message_element in messages_elements
-  		message = {}
-  		
-  		message_html = Nokogiri::HTML(message_element.attribute("innerHTML"))
-  		message["type"] = get_message_type message_html
-  		message["direction"] = get_message_direction message_html
-      if message["type"] == Constants::Css::MESSAGE_TYPE_CHAT 
-        message["time"] = message_html.at_css(Constants::Css::MESSAGE_TIME).text rescue ""
-    		message["text"] = message_html.at_css(Constants::Css::MESSAGE_TEXT).text rescue ""
-    		message["id"] = message_html.at_css(Constants::Css::MESSAGE_ID).attr["data-id"] rescue ""
-    	end
-    	messages.append(message)
-		end
-		messages
+      message  = get_message_info message_element rescue nil
+      if message
+      	messages.append(message)
+      end
+    end
+    messages
+  end
+
+  def get_message_info message_element
+      message = {}
+      message_html = Nokogiri::HTML(message_element.attribute("innerHTML"))
+      message["type"] = get_message_type message_html
+      message["direction"] = get_message_direction message_html
+      if message["type"] == Constants::Css::MESSAGE_TYPE_CHAT
+        message["text"] = message_html.at_css(Constants::Css::MESSAGE_TEXT).text
+      end
+      if  (message["direction"] != Constants::Css::MESSAGE_SYSTEM) and (message["type"] == Constants::Css::MESSAGE_TYPE_CHAT) 
+        message["id"] = message_html.at_css(Constants::Css::MESSAGE_ID).get_attribute("data-id")
+        message["time"] = message_html.at_css(Constants::Css::MESSAGE_TIME).text
+      end
+      message
   end
 
   def get_message_type message_html
@@ -274,7 +270,7 @@ class WhatsAppEmulator
   	elsif messages_elements_classes.include? Constants::Css::MESSAGE_DIRECTION_IN
   		message_direction = Constants::Css::MESSAGE_DIRECTION_IN
   	else
-  		message_direction = "system"
+  		message_direction = Constants::Css::MESSAGE_SYSTEM
   	end
   	message_direction
   end
